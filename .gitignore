@@ -1,0 +1,17 @@
+.DS_Store
+
+# Editor and local workspace files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local build and test output
+dist/
+coverage/
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
