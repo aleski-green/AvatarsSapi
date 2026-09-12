@@ -10,6 +10,9 @@
     body { margin:0; min-height:100vh; background:var(--paper); color:var(--ink); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
     .shell { max-width:1240px; margin:auto; padding:28px 24px 52px; }
     header { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; padding-bottom:22px; border-bottom:3px solid var(--ink); }
+    .nav { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .nav a { border:2px solid var(--ink); padding:7px 9px; color:var(--ink); text-decoration:none; font-size:.65rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+    .nav a:hover { background:var(--ink); color:var(--paper); }
     h1 { margin:0; max-width:780px; font-size:clamp(2.25rem,6vw,5.7rem); letter-spacing:-.09em; line-height:.8; text-transform:uppercase; }
     .eyebrow,.label { margin:0 0 7px; font-size:.68rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; }
     .counter { min-width:138px; padding:12px 14px; border:2px solid var(--ink); background:var(--acid); font:800 .8rem ui-monospace,monospace; line-height:1.45; }
@@ -34,7 +37,7 @@
 </head>
 <body>
   <div class="shell">
-    <header><div><p class="eyebrow">Combinatorial expression collection · v0.2</p><h1>Sapi<br>Expressions</h1></div><div class="counter" id="counter">Sapi #0001<br><span id="rarity">STANDARD</span></div></header>
+    <header><div><p class="eyebrow">Combinatorial expression collection · v0.2</p><h1>Sapi<br>Expressions</h1><nav class="nav" aria-label="Generator sections"><a href="index.html" aria-current="page">Expressions</a><a href="groups.html">Groups</a></nav></div><div class="counter" id="counter">Sapi #0001<br><span id="rarity">STANDARD</span></div></header>
     <main>
       <section class="expression-card" id="expressionCard" aria-label="Generated kaomoji expression"><div class="avatar-circle" id="avatarCircle"><span class="spark">✦</span><div class="expression" id="expression">( ◠‿◠ )</div></div><div class="expression-note"><span id="moodLabel">CALM</span><span>kaomoji avatar</span></div></section>
       <section class="panel"><p class="eyebrow">Build an expression</p><p class="intro">No people, faces, or pixel characters—only a handmade Sapi kaomoji. Mix expression, framing, accent, action, ink, and background into distinct collectible variations.</p><div class="trait-grid" id="controls"></div><div class="actions"><button class="primary" id="randomize">Random</button><button id="download">Export PNG</button><button id="copyMetadata">Copy metadata</button></div><div class="seed-row"><label><p class="label">Deterministic seed</p><input id="seed" value="sapi-0001" /></label><button id="applySeed">Apply seed</button></div><div class="readout" id="readout"></div></section>
