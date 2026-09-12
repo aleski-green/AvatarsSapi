@@ -3,238 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Office Agent Generator</title>
+  <title>Sapi Kaomoji Expressions</title>
   <style>
-    :root { --ink:#17191d; --paper:#f5f1e8; --lime:#c8ff00; --violet:#7447ff; --line:#22262d; }
+    :root { --ink:#151719; --paper:#f7f4ec; --acid:#d1ff00; }
     * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; background:var(--paper); color:var(--ink); font-family:Inter, ui-sans-serif, system-ui, sans-serif; }
-    .shell { max-width:1280px; margin:0 auto; padding:28px 24px 50px; }
-    header { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; border-bottom:3px solid var(--ink); padding-bottom:22px; }
-    h1 { font-size:clamp(2rem,5vw,4.6rem); letter-spacing:-.075em; line-height:.86; margin:0; text-transform:uppercase; max-width:720px; }
-    .eyebrow, .trait-label, .seed-label { margin:0 0 8px; font-size:.7rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
-    .counter { min-width:132px; border:2px solid var(--ink); padding:13px 15px; background:var(--lime); font-family:ui-monospace, monospace; font-size:.85rem; font-weight:800; }
-    main { display:grid; grid-template-columns:minmax(330px, .92fr) minmax(360px, 1.08fr); gap:28px; padding-top:28px; }
-    .preview { position:relative; border:3px solid var(--ink); background:#111; aspect-ratio:1; overflow:hidden; box-shadow:8px 8px 0 var(--ink); }
-    canvas { width:100%; height:100%; display:block; image-rendering:pixelated; image-rendering:crisp-edges; }
-    .stamp { position:absolute; right:12px; bottom:12px; background:var(--paper); border:2px solid var(--ink); padding:7px 9px; font-size:.7rem; font-weight:900; letter-spacing:.09em; }
-    .sapi-badge { left:12px; right:auto; top:12px; bottom:auto; font-family:ui-monospace, monospace; font-size:.9rem; letter-spacing:0; text-transform:none; }
-    .panel { background:#fffdf7; border:3px solid var(--ink); padding:22px; }
-    .panel > p { margin:0 0 20px; max-width:570px; line-height:1.45; color:#4b4e54; }
-    .trait-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; }
-    label { display:block; }
-    select { width:100%; appearance:none; border:2px solid var(--ink); border-radius:0; background:#fff; padding:10px 32px 10px 11px; font-weight:750; color:var(--ink); cursor:pointer; background-image:linear-gradient(45deg, transparent 50%, #17191d 50%),linear-gradient(135deg, #17191d 50%, transparent 50%); background-position:calc(100% - 15px) 15px,calc(100% - 10px) 15px; background-size:5px 5px,5px 5px; background-repeat:no-repeat; }
-    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
-    button { appearance:none; border:2px solid var(--ink); background:#fff; color:var(--ink); padding:12px 14px; text-transform:uppercase; letter-spacing:.06em; font-size:.72rem; font-weight:900; cursor:pointer; box-shadow:3px 3px 0 var(--ink); }
-    button:hover { transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
-    button.primary { background:var(--lime); }
-    .seed-row { display:flex; gap:10px; margin-top:24px; align-items:end; }
-    .seed-row label { flex:1; }
-    input { width:100%; border:2px solid var(--ink); padding:10px 11px; font-family:ui-monospace,monospace; font-weight:750; }
-    .trait-readout { display:flex; flex-wrap:wrap; gap:7px; margin-top:22px; padding-top:20px; border-top:2px dashed #a6a39b; }
-    .chip { font-size:.72rem; padding:6px 8px; background:#ece8de; border:1px solid var(--ink); font-family:ui-monospace,monospace; }
-    .collection { margin-top:28px; border-top:3px solid var(--ink); padding-top:24px; }
-    .collection-head { display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:14px; }
-    .collection h2 { margin:0; font-size:1.3rem; letter-spacing:-.04em; text-transform:uppercase; }
-    .collection p { margin:4px 0 0; color:#53565b; font-size:.9rem; }
-    .gallery { display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; }
-    .tile { border:2px solid var(--ink); background:#111; aspect-ratio:1; cursor:pointer; position:relative; }
-    .tile:hover { outline:3px solid var(--violet); outline-offset:2px; }
-    .tile canvas { position:absolute; inset:0; }
-    @media (max-width:800px) { main { grid-template-columns:1fr; } .gallery { grid-template-columns:repeat(3, 1fr); } header { flex-direction:column; } }
-    @media (max-width:430px) { .shell { padding:18px 14px 35px; } .trait-grid { grid-template-columns:1fr; } .seed-row { flex-wrap:wrap; } .gallery { grid-template-columns:repeat(2,1fr); } }
+    body { margin:0; min-height:100vh; background:var(--paper); color:var(--ink); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .shell { max-width:1240px; margin:auto; padding:28px 24px 52px; }
+    header { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; padding-bottom:22px; border-bottom:3px solid var(--ink); }
+    h1 { margin:0; max-width:780px; font-size:clamp(2.25rem,6vw,5.7rem); letter-spacing:-.09em; line-height:.8; text-transform:uppercase; }
+    .eyebrow,.label { margin:0 0 7px; font-size:.68rem; font-weight:850; letter-spacing:.13em; text-transform:uppercase; }
+    .counter { min-width:138px; padding:12px 14px; border:2px solid var(--ink); background:var(--acid); font:800 .8rem ui-monospace,monospace; line-height:1.45; }
+    main { display:grid; grid-template-columns:minmax(320px,1fr) minmax(365px,1fr); gap:30px; padding-top:30px; }
+    .expression-card { min-height:480px; display:flex; flex-direction:column; justify-content:center; align-items:center; border:3px solid var(--ink); box-shadow:9px 9px 0 var(--ink); padding:30px; position:relative; overflow:hidden; transition:background .2s ease; }
+    .expression { position:relative; z-index:1; max-width:100%; text-align:center; overflow-wrap:anywhere; font-family:"SF Mono","Cascadia Mono","Noto Sans Symbols 2","Segoe UI Symbol",monospace; font-weight:700; font-size:clamp(2.1rem,5.8vw,5.5rem); letter-spacing:-.12em; line-height:1.25; color:var(--ink); text-shadow:2px 2px 0 #ffffff99; }
+    .expression-note { position:absolute; bottom:15px; left:17px; right:17px; display:flex; justify-content:space-between; gap:10px; font:700 .68rem ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase; }
+    .spark { position:absolute; font-size:2rem; opacity:.55; animation:float 5s ease-in-out infinite; } .spark:nth-child(1){ top:12%;left:12%; }.spark:nth-child(2){right:13%;top:20%;animation-delay:-2s}.spark:nth-child(3){left:20%;bottom:17%;animation-delay:-3s}.spark:nth-child(4){right:20%;bottom:15%;animation-delay:-1s}
+    @keyframes float { 50%{ transform:translateY(-9px) rotate(7deg) } }
+    .panel { border:3px solid var(--ink); background:#fffdf8; padding:22px; }
+    .intro { margin:0 0 22px; max-width:570px; line-height:1.5; color:#4e5157; }
+    .trait-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    label { display:block; } select,input { width:100%; border:2px solid var(--ink); border-radius:0; background:#fff; color:var(--ink); padding:10px 11px; font-weight:750; }
+    select { cursor:pointer; } .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+    button { appearance:none; border:2px solid var(--ink); border-radius:0; background:#fff; color:var(--ink); padding:12px 14px; box-shadow:3px 3px 0 var(--ink); cursor:pointer; font-size:.72rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
+    button:hover { transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); } button.primary { background:var(--acid); }
+    .seed-row { display:flex; align-items:end; gap:10px; margin-top:24px; }.seed-row label{flex:1}.readout { display:flex; flex-wrap:wrap; gap:7px; margin-top:22px; padding-top:20px; border-top:2px dashed #aaa69e; }.chip{border:1px solid var(--ink); background:#ece8df; padding:6px 8px; font:.72rem ui-monospace,monospace;}
+    .collection { margin-top:30px; padding-top:24px; border-top:3px solid var(--ink); }.collection-head{display:flex;justify-content:space-between;align-items:end;gap:14px;margin-bottom:15px}.collection h2{margin:0;font-size:1.35rem;letter-spacing:-.04em;text-transform:uppercase}.collection p{margin:4px 0 0;color:#50535a;font-size:.9rem}.gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.tile{aspect-ratio:1;border:2px solid var(--ink);box-shadow:none;display:flex;align-items:center;justify-content:center;padding:8px;font-family:"SF Mono","Cascadia Mono","Noto Sans Symbols 2","Segoe UI Symbol",monospace;font-size:clamp(.9rem,1.7vw,1.45rem);font-weight:700;letter-spacing:-.12em;line-height:1.25;text-transform:none}.tile:hover{outline:3px solid #785dff;outline-offset:2px}
+    @media(max-width:800px){main{grid-template-columns:1fr}.expression-card{min-height:360px}.gallery{grid-template-columns:repeat(3,1fr)}header{flex-direction:column}}@media(max-width:430px){.shell{padding:18px 14px 40px}.trait-grid{grid-template-columns:1fr}.seed-row{flex-wrap:wrap}.gallery{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
 <body>
   <div class="shell">
-    <header>
-      <div>
-        <p class="eyebrow">Combinatorial character system · v0.1</p>
-        <h1>Office<br>Agent Generator</h1>
-      </div>
-      <div class="counter" id="counter">Agent #0001<br><span id="rarity">STANDARD</span></div>
-    </header>
-
+    <header><div><p class="eyebrow">Combinatorial expression collection · v0.2</p><h1>Sapi<br>Expressions</h1></div><div class="counter" id="counter">Sapi #0001<br><span id="rarity">STANDARD</span></div></header>
     <main>
-      <section class="preview" aria-label="Generated office agent preview">
-        <canvas id="avatar" width="240" height="240"></canvas>
-        <span class="stamp sapi-badge" id="sapiBadge">( ◠‿◠ )</span>
-        <span class="stamp" id="stamp">OPERATIONS</span>
-      </section>
-      <section class="panel">
-        <p class="eyebrow">Build a worker</p>
-        <p>Each selection is a composable trait layer. “Feminine” profiles deliberately exclude facial-hair layers; neutral profiles use their own clean presentation traits.</p>
-        <div class="trait-grid" id="controls"></div>
-        <div class="actions">
-          <button class="primary" id="randomize">Randomize agent</button>
-          <button id="download">Export PNG</button>
-          <button id="copyMetadata">Copy metadata</button>
-        </div>
-        <div class="seed-row">
-          <label><p class="seed-label">Deterministic seed</p><input id="seed" value="office-agent-0001" /></label>
-          <button id="applySeed">Apply seed</button>
-        </div>
-        <div class="trait-readout" id="readout"></div>
-      </section>
+      <section class="expression-card" id="expressionCard" aria-label="Generated kaomoji expression"><span class="spark">✦</span><span class="spark">✳</span><span class="spark">•</span><span class="spark">♡</span><div class="expression" id="expression">( ◠‿◠ )</div><div class="expression-note"><span id="moodLabel">CALM</span><span>kaomoji only</span></div></section>
+      <section class="panel"><p class="eyebrow">Build an expression</p><p class="intro">No people, faces, or pixel characters—only a handmade Sapi kaomoji. Mix expression, framing, accent, action, ink, and background into distinct collectible variations.</p><div class="trait-grid" id="controls"></div><div class="actions"><button class="primary" id="randomize">Random</button><button id="download">Export PNG</button><button id="copyMetadata">Copy metadata</button></div><div class="seed-row"><label><p class="label">Deterministic seed</p><input id="seed" value="sapi-0001" /></label><button id="applySeed">Apply seed</button></div><div class="readout" id="readout"></div></section>
     </main>
-
-    <section class="collection">
-      <div class="collection-head">
-        <div><h2>Collection preview</h2><p>Click any worker to load it into the editor.</p></div>
-        <button id="generateCollection">Generate 10 agents</button>
-      </div>
-      <div class="gallery" id="gallery"></div>
-    </section>
+    <section class="collection"><div class="collection-head"><div><h2>Collection preview</h2><p>Click any expression to load it into the generator.</p></div><button id="generateCollection">Generate 10 Sapis</button></div><div class="gallery" id="gallery"></div></section>
   </div>
-
   <script>
-    const options = {
-      role: ['Operations','Finance','Engineering','Design','Sales','Legal','Research','People'],
-      profile: ['Masculine','Feminine','Neutral'],
-      sapi: ['◠‿◠','✿◠‿◠','◕‿◕','≧▽≦','˘‿˘','◡‿◡','◕﹏◕','T‿T','☉_☉','¬‿¬','◕⩊◕','>_<','♥‿♥','•̀ᴗ•́','◕︵◕','^‿^','≖‿≖'],
-      gesture: ['At desk','◠‿◠ ノ','ノ ◠‿◠ ノ','◠‿◠ ᕗ','ᕙ ◠‿◠ ᕗ','╰ ◠‿◠ ╯'],
-      skin: ['Porcelain','Amber','Honey','Umber','Espresso','Rose'],
-      hair: ['Black','Chestnut','Blonde','Copper','Silver','Blue'],
-      style: ['Cropped','Long','Curly','Bald','Bob','Slick'],
-      glasses: ['None','Round','Square','Tinted'],
-      headphones: ['None','Headset','Studio','Earbuds'],
-      outfit: ['Charcoal suit','White shirt','Turtleneck','Cobalt blazer','Olive cardigan','Brick polo'],
-      accessory: ['Coffee','Laptop','Clipboard','Phone','Notebook','Tablet'],
-      background: ['Lime office','Cobalt office','Warm coral','Violet suite','Teal lab','Night shift']
+    const options={
+      expression:['◠‿◠','✿◠‿◠','◕‿◕','≧▽≦','˘‿˘','◡‿◡','◕﹏◕','T‿T','☉_☉','¬‿¬','◕⩊◕','>_<','♥‿♥','•̀ᴗ•́','◕︵◕','^‿^','≖‿≖'],
+      frame:['Round','Soft dots','Flower','Minimal','Celebration'],
+      gesture:['Still','Wave','Hello','Focused','Power','Celebrate'],
+      accent:['None','Sparkles','Heart','Dot','Star'],
+      ink:['Ink','Cobalt','Plum','Forest','Coral'],
+      background:['Cream','Lime','Sky','Peach','Lilac','Mint']
     };
-    const palettes = {
-      skin:{Porcelain:'#f8c6a3',Amber:'#d88d55',Honey:'#bd7544',Umber:'#824e35',Espresso:'#4d3028',Rose:'#db9d91'},
-      hair:{Black:'#202126',Chestnut:'#633b2c',Blonde:'#e5ba60',Copper:'#c65238',Silver:'#d8d9d4',Blue:'#2e4c8f'},
-      outfit:{'Charcoal suit':'#30353f','White shirt':'#f6f5ed','Turtleneck':'#292e38','Cobalt blazer':'#264c9e','Olive cardigan':'#596f42','Brick polo':'#a34a3d'},
-      background:{'Lime office':['#bff000','#8dbd17'],'Cobalt office':['#2c5597','#173667'],'Warm coral':['#ee8a6c','#bd4e4c'],'Violet suite':['#7447a4','#422a6d'],'Teal lab':['#3caaa4','#237a79'],'Night shift':['#18203e','#411852']}
-    };
-    let state = { role:'Operations', profile:'Masculine', sapi:'◠‿◠', gesture:'At desk', skin:'Amber', hair:'Black', style:'Cropped', glasses:'Square', headphones:'Headset', outfit:'Charcoal suit', accessory:'Coffee', background:'Lime office' };
-    let agentId = 1;
-    const canvas = document.querySelector('#avatar');
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-
-    const rect = (x,y,w,h,c, target=ctx) => { target.fillStyle=c; target.fillRect(x,y,w,h); };
-    const px = (x,y,w,h,c, target=ctx) => rect(x,y,w,h,c,target);
-    const dark = '#17191d';
-    function drawDesk(c, bg) {
-      const [base, shade] = palettes.background[bg];
-      rect(0,0,120,120,base,c); rect(0,82,120,38,shade,c);
-      rect(8,13,26,31,'#ffffff22',c); rect(12,17,18,20,'#ffffff30',c);
-      rect(88,13,23,25,'#ffffff22',c); rect(91,17,17,15,'#ffffff30',c);
-      rect(0,95,120,6,dark,c); rect(12,101,96,19,'#262b32',c);
-    }
-    function drawHair(c, s) {
-      const h = palettes.hair[s.hair], skin = palettes.skin[s.skin];
-      if (s.style === 'Bald') { rect(39,31,42,11,skin,c); return; }
-      if (s.style === 'Long') { rect(31,31,58,47,h,c); rect(27,42,9,38,h,c); rect(84,42,9,38,h,c); }
-      if (s.style === 'Curly') { rect(29,32,62,38,h,c); [[29,27],[39,23],[52,22],[66,24],[78,28]].forEach(([x,y])=>rect(x,y,15,15,h,c)); }
-      if (s.style === 'Bob') { rect(30,31,60,42,h,c); rect(26,43,9,30,h,c); rect(85,43,9,30,h,c); }
-      if (s.style === 'Slick') { rect(31,30,57,18,h,c); rect(35,25,43,10,h,c); rect(31,38,7,23,h,c); }
-      if (s.style === 'Cropped') { rect(32,29,56,22,h,c); rect(37,24,43,12,h,c); }
-      rect(39,35,42,13,skin,c);
-    }
-    function drawGlasses(c, s) {
-      if (s.glasses === 'None') return;
-      const color = s.glasses === 'Tinted' ? '#3f70a8' : dark;
-      if (s.glasses === 'Round') { rect(39,50,13,11,color,c); rect(42,52,8,7,'#c7e8e4',c); rect(68,50,13,11,color,c); rect(70,52,8,7,'#c7e8e4',c); }
-      else { rect(38,50,16,11,color,c); rect(41,52,10,7,s.glasses==='Tinted'?'#75b8ce':'#e5f4ea',c); rect(67,50,16,11,color,c); rect(70,52,10,7,s.glasses==='Tinted'?'#75b8ce':'#e5f4ea',c); }
-      rect(54,54,13,3,color,c); rect(33,53,5,3,color,c); rect(83,53,5,3,color,c);
-    }
-    function drawHeadphones(c, s) {
-      if (s.headphones === 'None' || s.headphones === 'Earbuds') { if(s.headphones==='Earbuds') { rect(34,57,3,6,'#fff',c); rect(83,57,3,6,'#fff',c); } return; }
-      const col = s.headphones === 'Studio' ? '#8a5cff' : '#232833';
-      rect(29,39,6,25,col,c); rect(85,39,6,25,col,c); rect(34,34,51,5,col,c); rect(26,49,8,17,col,c); rect(86,49,8,17,col,c);
-      if(s.headphones==='Headset') { rect(88,61,11,3,col,c); rect(97,63,3,8,col,c); }
-    }
-    function drawAccessory(c,s) {
-      const x=80, y=86;
-      const designs = {
-        Coffee:()=>{rect(x,y,13,12,'#f5ede0',c);rect(x+2,y,9,2,'#683c29',c);rect(x+13,y+3,3,6,'#f5ede0',c);},
-        Laptop:()=>{rect(x-5,y+2,25,15,'#9aa5aa',c);rect(x-8,y+17,31,3,'#e5e2d7',c);},
-        Clipboard:()=>{rect(x,y,1,16,'#be8f58',c);rect(x,y,15,17,'#d7ab6f',c);rect(x+4,y+4,8,2,'#fff6de',c);rect(x+4,y+8,8,2,'#fff6de',c);},
-        Phone:()=>{rect(x+4,y,10,18,'#20252c',c);rect(x+6,y+3,6,10,'#74c6e3',c);},
-        Notebook:()=>{rect(x,y+1,14,16,'#f5c13f',c);rect(x+3,y+3,2,13,'#fff4cd',c);},
-        Tablet:()=>{rect(x-2,y,19,16,'#252d3a',c);rect(x+1,y+3,13,10,'#6dc6c2',c);}
-      }; designs[s.accessory]();
-    }
-    function drawAvatar(c, s) {
-      // Keep the trait drawing code in a 120-unit pixel grid, but render at 2×
-      // native resolution for a sharper, more detailed source PNG.
-      c.save();
-      c.setTransform(c.canvas.width / 120, 0, 0, c.canvas.height / 120, 0, 0);
-      c.clearRect(0, 0, 120, 120);
-      drawDesk(c, s.background); const skin = palettes.skin[s.skin], suit=palettes.outfit[s.outfit];
-      // body and collar
-      rect(31,75,58,23,suit,c); rect(38,74,20,11,'#f8f5e8',c); rect(62,74,20,11,'#f8f5e8',c);
-      if(s.outfit==='Charcoal suit' || s.outfit==='Cobalt blazer') rect(57,77,7,21,'#bd3734',c);
-      // A small set of expressive office poses derived from the Sapi action kaomoji.
-      if (s.gesture !== 'At desk') {
-        const arm = suit;
-        if (s.gesture === '◠‿◠ ノ') { rect(24,74,9,8,arm,c); rect(21,67,5,9,skin,c); }
-        else if (s.gesture === 'ノ ◠‿◠ ノ') { rect(24,74,9,8,arm,c); rect(87,74,9,8,arm,c); rect(21,67,5,9,skin,c); rect(94,67,5,9,skin,c); }
-        else if (s.gesture === '◠‿◠ ᕗ') { rect(86,71,10,8,arm,c); rect(94,66,5,7,skin,c); }
-        else if (s.gesture === 'ᕙ ◠‿◠ ᕗ') { rect(24,71,10,8,arm,c); rect(86,71,10,8,arm,c); rect(21,66,5,7,skin,c); rect(94,66,5,7,skin,c); }
-        else { rect(24,69,9,8,arm,c); rect(87,69,9,8,arm,c); rect(21,62,5,7,skin,c); rect(94,62,5,7,skin,c); }
-      }
-      // Neck + a stepped, gentler face shape rather than a square mask.
-      rect(52,70,16,11,skin,c);
-      rect(44,33,32,5,skin,c); rect(39,38,42,5,skin,c);
-      rect(36,43,48,24,skin,c); rect(40,67,40,5,skin,c); rect(45,72,30,3,skin,c);
-      rect(33,49,4,12,skin,c); rect(83,49,4,12,skin,c);
-      drawHair(c,s);
-      // Calm, human-readable facial features. The selected Sapi kaomoji guides the mood.
-      rect(45,49,8,2,'#5c433d',c); rect(67,49,8,2,'#5c433d',c);
-      const sad = ['◕﹏◕','T‿T','◕︵◕'].includes(s.sapi);
-      const startled = s.sapi === '☉_☉';
-      const focused = ['¬‿¬','•̀ᴗ•́','≖‿≖'].includes(s.sapi);
-      const delighted = ['≧▽≦','♥‿♥','✿◠‿◠'].includes(s.sapi);
-      if (delighted) { rect(47,54,4,2,dark,c); rect(69,54,4,2,dark,c); rect(45,56,2,2,dark,c); rect(73,56,2,2,dark,c); }
-      else if (startled) { rect(46,53,6,6,dark,c); rect(48,55,2,2,'#f7f0df',c); rect(68,53,6,6,dark,c); rect(70,55,2,2,'#f7f0df',c); }
-      else { rect(47,54,4,3,dark,c); rect(69,54,4,3,dark,c); }
-      rect(58,55,3,7,'#c47f69',c); rect(57,61,4,2,'#b06b60',c);
-      if (sad) { rect(55,67,11,2,'#9b4d52',c); rect(54,65,2,2,'#9b4d52',c); rect(66,65,2,2,'#9b4d52',c); }
-      else if (focused) { rect(55,65,11,2,'#9b4d52',c); }
-      else { rect(55,66,11,2,'#9b4d52',c); }
-      // restricted facial-hair layer: only masculine profile
-      if(s.profile==='Masculine' && s.style==='Bald') { rect(49,67,23,4,'#493128',c); rect(53,64,15,2,'#493128',c); }
-      drawGlasses(c,s); drawHeadphones(c,s); drawAccessory(c,s);
-      // badge
-      rect(35,83,12,8,'#f3efe4',c); rect(37,85,8,2,'#5db5bd',c);
-      c.restore();
-    }
-    function rerender() {
-      drawAvatar(ctx,state);
-      document.querySelector('#stamp').textContent=state.role.toUpperCase();
-      document.querySelector('#sapiBadge').textContent=`( ${state.sapi} )`;
-      document.querySelector('#counter').innerHTML=`Agent #${String(agentId).padStart(4,'0')}<br><span id="rarity">${rarity(state)}</span>`;
-      document.querySelector('#readout').innerHTML=Object.entries(state).map(([k,v])=>`<span class="chip">${k}: ${v}</span>`).join('');
-      for(const [key,val] of Object.entries(state)) document.querySelector(`[data-key="${key}"]`).value=val;
-    }
-    function rarity(s) { return s.background==='Night shift' && s.glasses==='Tinted' ? 'RARE' : s.headphones==='Studio' ? 'UNCOMMON' : 'STANDARD'; }
-    function createControls() {
-      const holder=document.querySelector('#controls');
-      for(const [key, values] of Object.entries(options)) {
-        const label=document.createElement('label'); label.innerHTML=`<p class="trait-label">${key}</p>`;
-        const select=document.createElement('select'); select.dataset.key=key;
-        values.forEach(value=>{const opt=document.createElement('option');opt.value=value;opt.textContent=value;select.append(opt)});
-        select.addEventListener('change',()=>{state[key]=select.value; rerender();}); label.append(select); holder.append(label);
-      }
-    }
-    function hashSeed(value) { let h=2166136261; for(let i=0;i<value.length;i++) h=Math.imul(h^value.charCodeAt(i),16777619); return h>>>0; }
-    function seeded(seed) { return ()=> { seed=(seed+0x6D2B79F5)|0; let t=Math.imul(seed^(seed>>>15),1|seed);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296; }; }
-    function randomState(random=Math.random) { const next={}; for(const [key, values] of Object.entries(options)) next[key]=values[Math.floor(random()*values.length)]; return next; }
-    function applySeed(seedText) { state=randomState(seeded(hashSeed(seedText))); agentId++; rerender(); }
-    function exportPng() { const output=document.createElement('canvas'); output.width=960;output.height=960; const o=output.getContext('2d');o.imageSmoothingEnabled=false;o.drawImage(canvas,0,0,960,960); const link=document.createElement('a');link.download=`office-agent-${agentId}.png`;link.href=output.toDataURL('image/png');link.click(); }
-    function metadata() { return {name:`Office Agent #${String(agentId).padStart(4,'0')}`,description:'A combinatorial Office Agent avatar.',attributes:Object.entries(state).map(([trait_type,value])=>({trait_type,value}))}; }
-    async function copyMetadata() { await navigator.clipboard.writeText(JSON.stringify(metadata(),null,2)); const btn=document.querySelector('#copyMetadata');const old=btn.textContent;btn.textContent='Metadata copied';setTimeout(()=>btn.textContent=old,1200); }
-    function createTile(s,id) { const tile=document.createElement('button');tile.className='tile';tile.title=`Load Office Agent #${id}`;const c=document.createElement('canvas');c.width=240;c.height=240;c.getContext('2d').imageSmoothingEnabled=false;drawAvatar(c.getContext('2d'),s);tile.append(c);tile.addEventListener('click',()=>{state=s;agentId=id;rerender();window.scrollTo({top:0,behavior:'smooth'});});return tile; }
-    function generateCollection() { const gallery=document.querySelector('#gallery');gallery.innerHTML='';const seedValue=document.querySelector('#seed').value;const rand=seeded(hashSeed(seedValue+'-collection'));for(let i=0;i<10;i++) gallery.append(createTile(randomState(rand),i+1)); }
-    createControls(); rerender(); generateCollection();
-    document.querySelector('#randomize').addEventListener('click',()=>{state=randomState();agentId++;document.querySelector('#seed').value=`office-agent-${String(agentId).padStart(4,'0')}`;rerender();});
-    document.querySelector('#download').addEventListener('click',exportPng);
-    document.querySelector('#copyMetadata').addEventListener('click',copyMetadata);
-    document.querySelector('#applySeed').addEventListener('click',()=>applySeed(document.querySelector('#seed').value));
-    document.querySelector('#generateCollection').addEventListener('click',generateCollection);
+    const palette={Cream:['#f7f4ec','#151719'],Lime:['#d1ff00','#151719'],Sky:['#bde9ff','#173c67'],Peach:['#ffc1a8','#5b292b'],Lilac:['#ddd5ff','#432b72'],Mint:['#bff1dc','#155145']};
+    const ink={Ink:'#151719',Cobalt:'#1d4fa3',Plum:'#643b91',Forest:'#1d654f',Coral:'#b83f49'};
+    let state={expression:'◠‿◠',frame:'Round',gesture:'Still',accent:'Sparkles',ink:'Ink',background:'Cream'}; let sapiId=1;
+    const moods={'◠‿◠':'Calm','✿◠‿◠':'Blooming','◕‿◕':'Curious','≧▽≦':'Delighted','˘‿˘':'Content','◡‿◡':'Gentle','◕﹏◕':'Worried','T‿T':'Tender','☉_☉':'Surprised','¬‿¬':'Mischievous','◕⩊◕':'Attentive','>_<':'Determined','♥‿♥':'Adoring','•̀ᴗ•́':'Focused','◕︵◕':'Pensive','^‿^':'Cheery','≖‿≖':'Knowing'};
+    function composed(s){const base=s.expression;const frames={Round:`( ${base} )`,'Soft dots':`(.  ${base} )`,Flower:`(✿ ${base} )`,Minimal:`( ${base} )`,Celebration:`╰( ${base} )╯`};let result=frames[s.frame];if(s.gesture==='Hello')result=`ノ ${result}`;else if(s.gesture==='Power')result=`ᕙ${result}ᕗ`;else if(s.gesture==='Celebrate')result=`╰${result}╯`;else if(s.gesture==='Wave')result+=' ノ';else if(s.gesture==='Focused')result+=' ᕗ';return result}
+    function createControls(){const host=document.querySelector('#controls');for(const [key,items] of Object.entries(options)){const label=document.createElement('label');label.innerHTML=`<p class="label">${key}</p>`;const select=document.createElement('select');select.dataset.key=key;items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;select.append(o)});select.addEventListener('change',()=>{state[key]=select.value;render()});label.append(select);host.append(label)}}
+    function sparkChar(s){return {None:'',Sparkles:'✦',Heart:'♡',Dot:'•',Star:'✳'}[s.accent]}
+    function render(){const card=document.querySelector('#expressionCard');card.style.background=palette[state.background][0];card.style.color=ink[state.ink];document.querySelector('#expression').textContent=composed(state);document.querySelector('#expression').style.color=ink[state.ink];document.querySelector('#moodLabel').textContent=moods[state.expression].toUpperCase();document.querySelectorAll('.spark').forEach(x=>x.textContent=sparkChar(state));document.querySelector('#counter').innerHTML=`Sapi #${String(sapiId).padStart(4,'0')}<br><span id="rarity">${rarity(state)}</span>`;document.querySelector('#readout').innerHTML=Object.entries(state).map(([k,v])=>`<span class="chip">${k}: ${v}</span>`).join('');for(const [k,v] of Object.entries(state))document.querySelector(`[data-key="${k}"]`).value=v}
+    function rarity(s){return s.expression==='♥‿♥'&&s.gesture==='Celebrate'?'RARE':s.frame==='Flower'||s.gesture==='Power'?'UNCOMMON':'STANDARD'}
+    function hash(value){let h=2166136261;for(let i=0;i<value.length;i++)h=Math.imul(h^value.charCodeAt(i),16777619);return h>>>0}function seeded(seed){return()=>{seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^(seed>>>15),1|seed);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
+    function randomState(rand=Math.random){const next={};for(const [key,items]of Object.entries(options))next[key]=items[Math.floor(rand()*items.length)];return next}function applySeed(value){state=randomState(seeded(hash(value)));sapiId++;render()}
+    function copyMetadata(){navigator.clipboard.writeText(JSON.stringify({name:`Sapi Expression #${String(sapiId).padStart(4,'0')}`,description:'A combinatorial kaomoji expression from the Sapi collection.',attributes:Object.entries(state).map(([trait_type,value])=>({trait_type,value}))},null,2));const b=document.querySelector('#copyMetadata');b.textContent='Metadata copied';setTimeout(()=>b.textContent='Copy metadata',1200)}
+    function exportPng(){const out=document.createElement('canvas'),size=1200,c=out.getContext('2d');out.width=out.height=size;c.fillStyle=palette[state.background][0];c.fillRect(0,0,size,size);c.fillStyle=ink[state.ink];c.font='700 110px "SF Mono", "Cascadia Mono", monospace';c.textAlign='center';c.textBaseline='middle';c.fillText(composed(state),size/2,size/2);const a=document.createElement('a');a.download=`sapi-expression-${sapiId}.png`;a.href=out.toDataURL('image/png');a.click()}
+    function tile(s,id){const b=document.createElement('button');b.className='tile';b.style.background=palette[s.background][0];b.style.color=ink[s.ink];b.textContent=composed(s);b.title=`Load Sapi Expression #${id}`;b.addEventListener('click',()=>{state=s;sapiId=id;render();window.scrollTo({top:0,behavior:'smooth'})});return b}function collection(){const g=document.querySelector('#gallery');g.innerHTML='';const r=seeded(hash(document.querySelector('#seed').value+'-collection'));for(let i=1;i<=10;i++)g.append(tile(randomState(r),i))}
+    createControls();render();collection();document.querySelector('#randomize').addEventListener('click',()=>{state=randomState();sapiId++;document.querySelector('#seed').value=`sapi-${String(sapiId).padStart(4,'0')}`;render()});document.querySelector('#applySeed').addEventListener('click',()=>applySeed(document.querySelector('#seed').value));document.querySelector('#copyMetadata').addEventListener('click',copyMetadata);document.querySelector('#download').addEventListener('click',exportPng);document.querySelector('#generateCollection').addEventListener('click',collection);
   </script>
 </body>
 </html>
