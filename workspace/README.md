@@ -2,7 +2,7 @@
 
 A clickable three-panel agent workspace with sample data. Open the portable `sapi-prototype.html` directly. The editable source is split into `index.html`, `styles.css`, and `app.js`. To serve the source locally, use `python3 -m http.server 4173 --bind 127.0.0.1` from this directory.
 
-The visual system follows the supplied [Sapi avatar generator](https://github.com/aleski-green/AvatarsSapi/tree/codex/sapi-kaomoji-expressions): ink `#151719`, warm paper `#f1ede3`, golden haze `#fdd997`, pastel backgrounds, outlined circular kaomoji, bold typography, and offset shadows. Avatars use the generator’s expressions and radial lighting treatment in CSS.
+The interface shares [the repository theme](../assets/sapi-theme.css), based on [sapiens4.rent](https://sapiens4.rent/): warm gray surfaces, dark navy monospace text, geometric headings, fine borders, and magenta/violet accents. Pastel kaomoji avatars retain the original generator’s expressions and radial lighting. Rebuild the portable HTML from the repository root with `python3 build-prototype.py`.
 
 ## Explore
 
