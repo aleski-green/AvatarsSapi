@@ -7,6 +7,7 @@ workspace = root / 'workspace'
 html = (workspace / 'index.html').read_text()
 for href, path in [('styles.css', workspace / 'styles.css'), ('../assets/sapi-theme.css', root / 'assets/sapi-theme.css')]:
     html = html.replace(f'<link rel="stylesheet" href="{href}">', '<style>\n' + path.read_text() + '\n</style>')
+html = html.replace('<script src="../assets/group-avatar.js"></script>', '<script>\n' + (root / 'assets/group-avatar.js').read_text() + '\n</script>')
 html = html.replace('<script src="app.js"></script>', '<script>\n' + (workspace / 'app.js').read_text() + '\n</script>')
 (workspace / 'sapi-prototype.html').write_text(html)
 print('Built workspace/sapi-prototype.html')

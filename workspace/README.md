@@ -9,7 +9,7 @@ The interface shares [the repository theme](../assets/sapi-theme.css), based on 
 - Use the three header icons to show or hide the chat list, chat, and workspace independently. Panel visibility saves locally.
 - The CORPORA footer shows only the shared computer, its current controller, or its last user when available.
 
-- Switch between personal and team agents, search, create a Sapi, or adjust its autonomy.
+- Switch between All, Sapis (individual agents), and Groups; search, create a Sapi or group, or adjust autonomy.
 - Send a chat message. Status, computer, and document prompts have sample responses; other prompts create demo tasks. Autonomous tasks execute after a short simulated delay.
 - Inspect Tasks, Log, and Cron. Create and run a task or schedule; pause and edit schedules.
 - Add, close, rename, and rearrange workspace tabs. Drag tabs, or use the tab menu’s move buttons. Website tabs save bookmarks and open externally.
@@ -32,3 +32,9 @@ Checked in the browser: computer takeover, release, handoff, and pause/resume; a
 The header uses `sapi*4 ◠‿◠ AI`, with workspace branding and promotional copy removed. The sidebar keeps CORPORA, view tabs, search, add-agent control, conversations, and shared-computer status. Chat text is 15px, previews 13px, and the desktop header is 48px high. All three panes fit side by side at a 968px viewport. Below 900px, remaining panels reflow without shrinking the text.
 
 Verified panel visibility and restoration, persistence after reload, readable font sizes, and horizontal fit at 968px, 390px, and 320px.
+
+## Group identities and mentions
+
+Groups use the same weighted Voronoi renderer as the Groups editor, shared in `assets/group-avatar.js`. Designers is a group; Jared, Aaron, SlackTwin, and Scout are individual Sapis. This classification is separate from an agent’s earlier personal/team scope. Existing local data is migrated without resetting conversations or workspace tabs.
+
+Known names and `@Name` mentions in conversations, activity details, documents, task owners, and computer ownership/queues open the matching chat. Mentions reveal a hidden chat panel and switch the list filter when necessary. The computer footer has separate controls for opening the computer and opening its current or last controller’s chat. Conversation drafts are retained when switching chats.

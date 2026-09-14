@@ -19,3 +19,7 @@ The generators share a module navigation bar. Workspace includes the same destin
 Run `python3 build-prototype.py` after changing the workspace or shared theme to rebuild its portable HTML. The bundle includes both stylesheets and the workspace JavaScript; web fonts have local fallback fonts.
 
 Verified desktop and 320px/390px layouts, expression controls, group peer creation and renaming, module navigation, workspace panel toggles, and JavaScript syntax.
+
+## Shared group avatars
+
+`assets/group-avatar.js` contains the Groups module’s weighted Voronoi renderer. Both the Groups editor and Workspace group identities use it; the portable workspace bundles it as well. Workspace provides All / Sapis / Groups filters and clickable `@Name` mentions that navigate to the matching individual or group conversation.
