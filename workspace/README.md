@@ -6,6 +6,9 @@ The visual system follows the supplied [Sapi avatar generator](https://github.co
 
 ## Explore
 
+- Use the three header icons to show or hide the chat list, chat, and workspace independently. Panel visibility saves locally.
+- The CORPORA footer shows only the shared computer, its current controller, or its last user when available.
+
 - Switch between personal and team agents, search, create a Sapi, or adjust its autonomy.
 - Send a chat message. Status, computer, and document prompts have sample responses; other prompts create demo tasks. Autonomous tasks execute after a short simulated delay.
 - Inspect Tasks, Log, and Cron. Create and run a task or schedule; pause and edit schedules.
@@ -23,3 +26,9 @@ The left panel provides identity and team scope, the middle panel provides instr
 ## Verification
 
 Checked in the browser: computer takeover, release, handoff, and pause/resume; autonomous chat-to-task completion; creating an agent; adding, renaming, and moving tabs; document editing and persistence after reload; creating, pausing, and manually running schedules. Inspected desktop and phone layouts and checked horizontal fit at 320px and 390px. JavaScript syntax validation passed, with no browser console errors in the checked flows.
+
+## Compact layout update
+
+The header uses `sapi*4 ◠‿◠ AI`, with workspace branding and promotional copy removed. The sidebar keeps CORPORA, view tabs, search, add-agent control, conversations, and shared-computer status. Chat text is 15px, previews 13px, and the desktop header is 48px high. All three panes fit side by side at a 968px viewport. Below 900px, remaining panels reflow without shrinking the text.
+
+Verified panel visibility and restoration, persistence after reload, readable font sizes, and horizontal fit at 968px, 390px, and 320px.
