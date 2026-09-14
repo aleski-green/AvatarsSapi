@@ -1,6 +1,8 @@
-# Sapi workspace prototype
+# CORPORA UI lab
 
-A clickable agent workspace with dummy conversations, tasks, schedules, shared computer locks, and an independent browser surface. Open `index.html` through a local server, or open the portable `sapi-prototype.html`. Rebuild the portable file with `python3 build-prototype.py` from the repository root.
+CORPORA provides the UI, dashboards, chats, workspaces, and settings for Sapiens4, a multi-agent organization of autonomous Sapis. This module is a frontend lab built with demo data: conversations, tasks, schedules, shared computer locks, and agent activity are simulated.
+
+Open `index.html` through a local server, or open the portable `sapi-prototype.html`. Rebuild the portable file with `python3 build-prototype.py` from the repository root.
 
 ## Interface
 
