@@ -224,11 +224,9 @@ button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,s
 [data-theme=dark] .sapi-workspace .day-divider::before,[data-theme=dark] .sapi-workspace .day-divider::after{background:var(--sapi-line)}
 .sapi-workspace .browser-address-bar input::placeholder,.sapi-workspace .composer textarea::placeholder{color:var(--sapi-muted);opacity:1}
 
-/* One Director anchors CORPORA; the other conversations follow activity. */
-.sapi-workspace .avatar.director-avatar::after{content:'♛';position:absolute;top:-10px;right:-3px;width:21px;height:21px;display:grid;place-items:center;font:20px/1 Georgia,serif;letter-spacing:0;color:#835800;background:#ffe5a3;border:1px solid #cda24d;border-radius:50%;transform:rotate(15deg);z-index:2}
-.sapi-workspace .director-label{color:var(--sapi-violet);font-weight:700}
-.sapi-workspace .director-row{margin-bottom:5px;border-bottom-color:var(--sapi-line)}
 .sapi-workspace .agent-list{padding-top:5px}
-[data-theme=dark] .sapi-workspace .avatar.director-avatar::after{background:#5c4020;color:#ffe4a2;border-color:#be9453}
+.sapi-workspace .avatar.main-sapi-avatar{box-shadow:0 0 0 2px var(--sapi-bg),0 0 0 4px var(--sapi-pink)}
+.sapi-workspace .main-sapi-row{margin-bottom:10px}
+.sapi-workspace .main-sapi-row::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:1px;background:var(--sapi-line);pointer-events:none}
 
 .sapi-workspace .agent-row-name small{white-space:nowrap;flex-shrink:0}

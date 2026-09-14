@@ -8,13 +8,13 @@ const STORAGE = 'sapi-workspace-prototype-v1';
 const tabTypes = {computer:['▣','Computer'],overview:['◫','Overview'],artifacts:['▤','Artifacts'],github:['⑂','GitHub'],slack:['#','Slack'],connections:['◎','Connections'],document:['▧','Kickoff brief'],custom:['↗','Website'],blank:['','New tab'],html:['◇','HTML']};
 const seed = {
   agents:[
-    {id:'jared',name:'Jared',role:'Director',color:'#d8e5f4',face:'◠‿◠',scope:'personal',status:'online',preview:'Your day, already sorted.',autonomy:'auto'},
+    {id:'jared',name:'Jared',role:'Chief of staff',color:'#d8e5f4',face:'◠‿◠',scope:'personal',status:'online',preview:'Your day, already sorted.',autonomy:'auto'},
     {id:'aaron',name:'Aaron',role:'Tech lead',color:'#f7d6d1',face:'•̀ᴗ•́',scope:'team',status:'busy',preview:'Getting Brightside pilot-ready.',autonomy:'auto'},
     {id:'designers',kind:'group',name:'Designers',role:'Creative studio · 3 Sapis',color:'#dbd0f7',face:'✿◠‿◠',scope:'team',status:'online',preview:'A fresh look for the kickoff.',autonomy:'auto'},
     {id:'slack',name:'SlackTwin',role:'Your communications twin',color:'#c9f3f1',face:'◕‿◕',scope:'personal',status:'online',preview:'Keeping everyone in the loop.',autonomy:'auto'},
     {id:'scout',name:'Scout',role:'Research & discovery',color:'#fdd997',face:'¬‿¬',scope:'team',status:'idle',preview:'Ready for the next rabbit hole.',autonomy:'auto'}
   ],
-  directorId:'jared',selected:'aaron',scope:'all',panel:'chat',mode:'auto',panes:{sidebar:true,chat:true,workspace:true},
+  mainSapiId:'jared',selected:'aaron',scope:'all',panel:'chat',mode:'auto',panes:{sidebar:true,chat:true,workspace:true},
   tabs:[{id:'blank',type:'blank',title:'New tab'}],activeTab:'blank',
   computer:{owner:'aaron',lastUsed:'aaron',paused:false,queue:['designers','slack'],completed:1},
   tasks:[
@@ -65,12 +65,14 @@ let search = '', toastTimer, dragId, pending = new Set();
 const agent = id => state.agents.find(a=>a.id===id) || state.agents[0];
 const selected = () => agent(state.selected);
 const isGroup = a => a.kind==='group' || a.id==='designers';
-const isDirector = a => a.id===state.directorId;
+const isMainSapi = a => a.id===state.mainSapiId;
 function initializeRoster(){
-  if(!state.agents.some(a=>a.id===state.directorId&&!isGroup(a)))
-    state.directorId=state.agents.find(a=>a.id==='jared'&&!isGroup(a))?.id||state.agents.find(a=>!isGroup(a))?.id;
-  const director=state.agents.find(a=>isDirector(a));
-  if(director?.role==='Chief of staff')director.role='Director';
+  state.mainSapiId??=state.directorId;
+  delete state.directorId;
+  if(!state.agents.some(a=>a.id===state.mainSapiId&&!isGroup(a)))
+    state.mainSapiId=state.agents.find(a=>a.id==='jared'&&!isGroup(a))?.id||state.agents.find(a=>!isGroup(a))?.id;
+  const mainSapi=state.agents.find(a=>isMainSapi(a));
+  if(mainSapi?.role==='Director')mainSapi.role='Chief of staff';
   // Legacy messages have display times but no dates. Use yesterday for this one-time migration.
   const base=new Date();base.setDate(base.getDate()-1);base.setHours(0,0,0,0);
   for(const a of state.agents){
@@ -170,11 +172,11 @@ function renderGlobal(){
 function renderSidebar(){
   $('#agent-count').textContent=String(state.agents.length).padStart(2,'0');
   $$('[data-scope]').forEach(b=>{b.classList.toggle('active',b.dataset.scope===state.scope);b.setAttribute('aria-pressed',b.dataset.scope===state.scope);});
-  const list=state.agents.filter(a=>isDirector(a)||((state.scope==='all'||(state.scope==='groups'?isGroup(a):!isGroup(a)))&&`${a.name} ${a.role}`.toLowerCase().includes(search.toLowerCase())))
-    .sort((a,b)=>Number(isDirector(b))-Number(isDirector(a))||(b.lastActivity||0)-(a.lastActivity||0));
-  $('#agent-list').innerHTML=list.map(a=>`<button class="agent-row ${a.id===state.selected?'active':''} ${isDirector(a)?'director-row':''}" data-agent="${esc(a.id)}" aria-pressed="${a.id===state.selected}" ${isDirector(a)?'title="Director · Always pinned to top"':''}>${avatar(a,isDirector(a)?'director-avatar':'',true)}<span class="agent-row-copy"><span class="agent-row-name">${esc(a.name)}<small>${esc(new Date(a.lastActivity).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}))}</small></span><p>${isDirector(a)?'<span class="director-label">Director · </span>':''}${esc(a.preview)}</p></span>${a.unread&&!isDirector(a)?'<span class="unread-dot"></span>':''}</button>`).join('');
+  const list=state.agents.filter(a=>isMainSapi(a)||((state.scope==='all'||(state.scope==='groups'?isGroup(a):!isGroup(a)))&&`${a.name} ${a.role}`.toLowerCase().includes(search.toLowerCase())))
+    .sort((a,b)=>Number(isMainSapi(b))-Number(isMainSapi(a))||(b.lastActivity||0)-(a.lastActivity||0));
+  $('#agent-list').innerHTML=list.map(a=>`<button class="agent-row ${a.id===state.selected?'active':''} ${isMainSapi(a)?'main-sapi-row':''}" data-agent="${esc(a.id)}" aria-pressed="${a.id===state.selected}">${avatar(a,isMainSapi(a)?'main-sapi-avatar':'',true)}<span class="agent-row-copy"><span class="agent-row-name">${esc(a.name)}<small>${esc(new Date(a.lastActivity).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}))}</small></span><p>${esc(a.preview)}</p></span>${a.unread&&!isMainSapi(a)?'<span class="unread-dot"></span>':''}</button>`).join('');
 }
-function renderAgentHeader(){const a=selected();$('#agent-heading').innerHTML=`${avatar(a,isDirector(a)?'large director-avatar':'large')}<div><h2>${esc(a.name)} <span class="muted" style="font-weight:400">/ ${esc(isDirector(a)?'Director':a.role.split(' ·')[0])}</span></h2><p><span class="status-dot"></span> ${state.mode==='paused'?'Paused':a.autonomy==='auto'?'Autonomous':'Assisted'}</p></div><button class="icon-button" data-action="agent-settings" aria-label="Agent settings">···</button>`;$('#message-input').placeholder=`Message ${a.name}…`;$$('[data-panel]').forEach(b=>{b.classList.toggle('active',b.dataset.panel===state.panel);b.setAttribute('aria-pressed',b.dataset.panel===state.panel);});$('.composer-hint span').textContent=state.mode==='paused'?'Ⅱ Team paused':a.autonomy==='auto'?'Autonomous':'Assisted';}
+function renderAgentHeader(){const a=selected();$('#agent-heading').innerHTML=`${avatar(a,isMainSapi(a)?'large main-sapi-avatar':'large')}<div><h2>${esc(a.name)} <span class="muted" style="font-weight:400">/ ${esc(a.role.split(' ·')[0])}</span></h2><p><span class="status-dot"></span> ${state.mode==='paused'?'Paused':a.autonomy==='auto'?'Autonomous':'Assisted'}</p></div><button class="icon-button" data-action="agent-settings" aria-label="Agent settings">···</button>`;$('#message-input').placeholder=`Message ${a.name}…`;$$('[data-panel]').forEach(b=>{b.classList.toggle('active',b.dataset.panel===state.panel);b.setAttribute('aria-pressed',b.dataset.panel===state.panel);});$('.composer-hint span').textContent=state.mode==='paused'?'Ⅱ Team paused':a.autonomy==='auto'?'Autonomous':'Assisted';}
 function getMessages(id){if(!state.messages[id]){const a=agent(id);state.messages[id]=[{role:'assistant',time:'09:35',text:({jared:'Good morning, Alex. The team is making progress on Brightside. Aaron has the technical work, Designers are up next on the shared computer, and I’m keeping the bigger picture together.\n\nWhat would you like to move forward today?',designers:'We’ve got the kickoff deck on our list. We’re next in line for the shared computer—once Aaron wraps up, we’ll take it from there.',slack:'I’m keeping an eye on team conversations and collecting the updates that matter. The Brightside recap is ready for a final pass.',scout:'Ready to explore. Give me an account, a question, or a hunch, and I’ll turn it into something useful.'})[id]||`Hi, I’m ${a.name}. Give me a task and I’ll get started.`}];}return state.messages[id];}
 function executionCard(){return `<div class="execution-card"><div class="execution-title">Actions <span>3 / 3</span></div><div class="execution-line"><span class="check">✓</span> Read meeting notes & account context <time>2s</time></div><div class="execution-line"><span class="check">✓</span> Verify Slack + SSO release <time>4s</time></div><div class="execution-line"><span class="check">✓</span> Share update with Brightside <time>3s</time></div></div>`;}
 function renderConversation(){const host=$('#conversation-body');$('#composer-area').hidden=state.panel!=='chat';renderAgentHeader();renderGlobal();
