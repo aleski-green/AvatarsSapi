@@ -16,7 +16,7 @@ python3 -m http.server 4174 --bind 127.0.0.1
 | Expressions | [avatars.html](avatars.html) | Generate individual Sapi kaomoji avatars used by CORPORA. |
 | Groups | [groups.html](groups.html) | Generate Voronoi group avatars for multi-Sapi organizations. |
 
-CORPORA is a clickable HTML prototype with local browser persistence. Conversations, agent execution, connected apps, schedules, and computer control are simulated. See the [CORPORA documentation](workspace/README.md) for interactions and scope. A portable single-file version is included at [workspace/sapi-prototype.html](workspace/sapi-prototype.html).
+CORPORA is a clickable HTML prototype with local browser persistence. Conversations, agent execution, connected apps, schedules, and computer control are simulated. See the [CORPORA documentation](workspace/README.md) for interactions and scope. A portable single-file version is included at [workspace/demo-corpora-ui.html](workspace/demo-corpora-ui.html).
 
 ## Shared style
 

@@ -2,7 +2,7 @@
 
 CORPORA provides the UI, dashboards, chats, workspaces, and settings for Sapiens4, a multi-agent organization of autonomous Sapis. This module is a frontend lab built with demo data: conversations, tasks, schedules, shared computer locks, and agent activity are simulated.
 
-Open `index.html` through a local server, or open the portable `sapi-prototype.html`. Rebuild the portable file with `python3 build-prototype.py` from the repository root.
+Open `index.html` through a local server, or open the portable `demo-corpora-ui.html`. Rebuild the portable file with `python3 build-prototype.py` from the repository root.
 
 ## Interface
 
