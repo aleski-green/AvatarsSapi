@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1ede3">
+  <title>Sapi — A little team. A lot in motion.</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <a class="wordmark" href="#" aria-label="Sapi home">sapi<span class="brand-spark">✳</span></a>
+      <div class="workspace-name"><a class="tiny-label" href="../index.html" style="text-decoration:none">← AVATAR STUDIO</a><strong>Little big things <span>↗</span></strong></div>
+      <div class="header-status"><span class="status-dot"></span><span id="team-status">Your team is in motion</span></div>
+      <button class="pill" id="autonomy-button"><span>✦</span> <span id="autonomy-label">Autonomous</span> <span>⌄</span></button>
+      <button class="user-avatar" id="profile-button" aria-label="Workspace settings">AP</button>
+    </header>
+    <div class="main-grid">
+      <aside class="sidebar">
+        <div class="sidebar-heading"><h1>Your Sapis<span id="agent-count">05</span></h1><button class="icon-button" id="add-agent" aria-label="Add an agent">＋</button></div>
+        <div class="scope-switch" aria-label="Agent views"><button data-scope="all" class="active">All</button><button data-scope="personal">Personal</button><button data-scope="team">Team</button></div>
+        <label class="search-field"><span aria-hidden="true">⌕</span><input id="agent-search" type="search" placeholder="Find a Sapi…" aria-label="Search agents"><kbd>/</kbd></label>
+        <div id="agent-list" class="agent-list"></div>
+        <div class="sidebar-bottom">
+          <div class="small-heading"><span>SHARED RESOURCES</span><span>01</span></div>
+          <button id="resource-button" class="resource-card"><span class="computer-icon" aria-hidden="true">▣</span><span><strong>Team computer</strong><small id="resource-owner">Aaron is in control</small></span><span class="status-dot"></span></button>
+          <div class="team-note"><span class="note-spark">✳</span><p>A little team.<br><strong>A lot in motion.</strong></p></div>
+          <button id="connections-button" class="text-button full-row">◎ <span>Connections</span><span class="count">4</span></button>
+          <div class="demo-note"><span class="status-dot"></span> PLAYGROUND · DUMMY DATA</div>
+        </div>
+      </aside>
+      <section class="conversation" aria-label="Agent conversation">
+        <div class="agent-heading" id="agent-heading"></div>
+        <nav class="conversation-tabs" aria-label="Agent activity"><button data-panel="chat" class="active">Chat</button><button data-panel="tasks">Tasks <span id="task-count">3</span></button><button data-panel="log">Log <span class="log-dot"></span></button><button data-panel="cron">Cron</button></nav>
+        <div class="conversation-body" id="conversation-body"></div>
+        <div class="composer-area" id="composer-area">
+          <div id="attachment-chip"></div>
+          <form class="composer" id="chat-form"><textarea rows="2" id="message-input" placeholder="Give Aaron something to run with…" aria-label="Message agent"></textarea><div class="composer-bottom"><button type="button" id="attach-button" class="icon-button" aria-label="Attach a demo document">＋</button><span>↳ Context travels with your Sapi</span><button type="submit" class="send-button" aria-label="Send message">↑</button></div></form>
+          <div class="composer-hint"><span>✦ Works autonomously</span><span>Enter to send · Shift + Enter for a new line</span></div>
+        </div>
+      </section>
+      <main class="workspace" aria-label="Dashboards and artifacts">
+        <div class="workspace-heading"><span class="tiny-label">WORKSPACE</span><span class="workspace-subtitle">A home for everything they do.</span><button class="icon-button" id="workspace-menu" aria-label="Workspace options">···</button></div>
+        <div class="browser-tabs-wrap"><div id="browser-tabs" class="browser-tabs" aria-label="Workspace tabs"></div><button id="add-tab" class="add-tab" aria-label="Add workspace tab">＋</button></div>
+        <div id="workspace-content" class="workspace-content"></div>
+        <footer class="workspace-footer"><span id="workspace-footer-status">● All changes saved locally</span><span>MADE OF LITTLE POSSIBILITIES ✳</span></footer>
+      </main>
+    </div>
+  </div>
+  <dialog id="modal" aria-labelledby="modal-title"><div class="modal-top"><span class="tiny-label" id="modal-eyebrow">SAPI WORKSPACE</span><button class="icon-button" id="close-modal" aria-label="Close dialog">×</button></div><div id="modal-content"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
