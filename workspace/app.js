@@ -8,13 +8,13 @@ const STORAGE = 'sapi-workspace-prototype-v1';
 const tabTypes = {computer:['▣','Computer'],overview:['◫','Overview'],artifacts:['▤','Artifacts'],github:['⑂','GitHub'],slack:['#','Slack'],connections:['◎','Connections'],document:['▧','Kickoff brief'],custom:['↗','Website'],blank:['','New tab'],html:['◇','HTML']};
 const seed = {
   agents:[
-    {id:'jared',name:'Jared',role:'Chief of staff',color:'#d8e5f4',face:'◠‿◠',scope:'personal',status:'online',preview:'Your day, already sorted.',autonomy:'auto'},
+    {id:'jared',name:'Jared',role:'Director',color:'#d8e5f4',face:'◠‿◠',scope:'personal',status:'online',preview:'Your day, already sorted.',autonomy:'auto'},
     {id:'aaron',name:'Aaron',role:'Tech lead',color:'#f7d6d1',face:'•̀ᴗ•́',scope:'team',status:'busy',preview:'Getting Brightside pilot-ready.',autonomy:'auto'},
     {id:'designers',kind:'group',name:'Designers',role:'Creative studio · 3 Sapis',color:'#dbd0f7',face:'✿◠‿◠',scope:'team',status:'online',preview:'A fresh look for the kickoff.',autonomy:'auto'},
     {id:'slack',name:'SlackTwin',role:'Your communications twin',color:'#c9f3f1',face:'◕‿◕',scope:'personal',status:'online',preview:'Keeping everyone in the loop.',autonomy:'auto'},
     {id:'scout',name:'Scout',role:'Research & discovery',color:'#fdd997',face:'¬‿¬',scope:'team',status:'idle',preview:'Ready for the next rabbit hole.',autonomy:'auto'}
   ],
-  selected:'aaron',scope:'all',panel:'chat',mode:'auto',panes:{sidebar:true,chat:true,workspace:true},
+  directorId:'jared',selected:'aaron',scope:'all',panel:'chat',mode:'auto',panes:{sidebar:true,chat:true,workspace:true},
   tabs:[{id:'blank',type:'blank',title:'New tab'}],activeTab:'blank',
   computer:{owner:'aaron',lastUsed:'aaron',paused:false,queue:['designers','slack'],completed:1},
   tasks:[
@@ -65,6 +65,39 @@ let search = '', toastTimer, dragId, pending = new Set();
 const agent = id => state.agents.find(a=>a.id===id) || state.agents[0];
 const selected = () => agent(state.selected);
 const isGroup = a => a.kind==='group' || a.id==='designers';
+const isDirector = a => a.id===state.directorId;
+function initializeRoster(){
+  if(!state.agents.some(a=>a.id===state.directorId&&!isGroup(a)))
+    state.directorId=state.agents.find(a=>a.id==='jared'&&!isGroup(a))?.id||state.agents.find(a=>!isGroup(a))?.id;
+  const director=state.agents.find(a=>isDirector(a));
+  if(director?.role==='Chief of staff')director.role='Director';
+  // Legacy messages have display times but no dates. Use yesterday for this one-time migration.
+  const base=new Date();base.setDate(base.getDate()-1);base.setHours(0,0,0,0);
+  for(const a of state.agents){
+    const last=state.messages[a.id]?.at(-1);
+    if(a.lastActivity==null&&last)a.preview=`${last.role==='user'?'You: ':''}${last.text}`.replace(/\s+/g,' ').trim();
+    const time=last?.time||({aaron:'09:42',designers:'09:38'})[a.id]||'09:35';
+    const match=time.match(/(\d{1,2}):(\d{2})(?:\s*([AP]M))?/i);
+    let hours=Number(match?.[1]||9);
+    if(match?.[3])hours=hours%12+(match[3].toUpperCase()==='PM'?12:0);
+    a.lastActivity ??= last?.timestamp||base.getTime()+(hours*60+Number(match?.[2]||35))*60000;
+    a.activityTime ??= time;
+    a.unread ??= a.id!==state.selected;
+  }
+}
+initializeRoster();
+function recordActivity(id,preview){
+  const a=state.agents.find(a=>a.id===id);if(!a)return;
+  state.activityClock=Math.max(Date.now(),(state.activityClock||0)+1);
+  a.lastActivity=state.activityClock;a.activityTime=now();
+  if(preview)a.preview=String(preview).replace(/\s+/g,' ').trim();
+  a.unread=id!==state.selected||!state.panes.chat;
+  renderSidebar();
+}
+function appendMessage(id,message){
+  getMessages(id).push({...message,timestamp:Date.now()});
+  recordActivity(id,`${message.role==='user'?'You: ':''}${message.text}`);
+}
 const groupAvatarCache = new Map();
 function groupAvatar(a){
   const key=JSON.stringify([a.id,a.name,a.face,a.color,a.groupAvatar]);
@@ -97,14 +130,14 @@ function formatText(value){
 function openChat(id){
   const a=state.agents.find(a=>a.id===id);if(!a)return;
   state.drafts ??= {};state.drafts[state.selected]=$('#message-input').value;
-  state.selected=id;state.panel='chat';state.panes.chat=true;
+  state.selected=id;state.panel='chat';state.panes.chat=true;a.unread=false;
   if(state.scope!=='all')state.scope=isGroup(a)?'groups':'sapis';
   search='';$('#agent-search').value='';$('#message-input').value=state.drafts[id]||'';
   closeModal();render();$('#conversation-body').scrollTop=$('#conversation-body').scrollHeight;
 }
 function save(){storeWorkspace();try{localStorage.setItem(STORAGE,JSON.stringify(state));}catch{toast('Browser storage is full or unavailable. Changes will last for this session.');}}
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3200);}
-function log(agentId,title,detail){state.logs.unshift({agent:agentId,time:now(),title,detail});state.logs=state.logs.slice(0,100);}
+function log(agentId,title,detail){recordActivity(agentId,title);state.logs.unshift({agent:agentId,time:now(),title,detail});state.logs=state.logs.slice(0,100);}
 function modal(title,content,eyebrow='SAPI WORKSPACE'){$('#modal-eyebrow').textContent=eyebrow;$('#modal-content').innerHTML=`<h2 id="modal-title">${esc(title)}</h2>${content}`;if(!$('#modal').open)$('#modal').showModal();}
 function closeModal(){$('#modal').close();}
 function render(){if($('#modal').open&&$('#modal-title')?.textContent==='Shared computer')computerDialog();renderPanes();renderSidebar();renderAgentHeader();renderConversation();renderTabs();renderWorkspace();renderGlobal();save();}
@@ -137,10 +170,11 @@ function renderGlobal(){
 function renderSidebar(){
   $('#agent-count').textContent=String(state.agents.length).padStart(2,'0');
   $$('[data-scope]').forEach(b=>{b.classList.toggle('active',b.dataset.scope===state.scope);b.setAttribute('aria-pressed',b.dataset.scope===state.scope);});
-  const list=state.agents.filter(a=>(state.scope==='all'||(state.scope==='groups'?isGroup(a):!isGroup(a)))&&`${a.name} ${a.role}`.toLowerCase().includes(search.toLowerCase()));
-  $('#agent-list').innerHTML=list.length?list.map(a=>`<button class="agent-row ${a.id===state.selected?'active':''}" data-agent="${esc(a.id)}" aria-pressed="${a.id===state.selected}">${avatar(a,'',true)}<span class="agent-row-copy"><span class="agent-row-name">${esc(a.name)}<small>${a.id==='aaron'?'09:42':a.id==='designers'?'09:38':'09:35'}</small></span><p>${esc(a.preview)}</p></span>${a.id===state.selected?'':'<span class="unread-dot"></span>'}</button>`).join(''):'<div class="empty">No Sapis found.</div>';
+  const list=state.agents.filter(a=>isDirector(a)||((state.scope==='all'||(state.scope==='groups'?isGroup(a):!isGroup(a)))&&`${a.name} ${a.role}`.toLowerCase().includes(search.toLowerCase())))
+    .sort((a,b)=>Number(isDirector(b))-Number(isDirector(a))||(b.lastActivity||0)-(a.lastActivity||0));
+  $('#agent-list').innerHTML=list.map(a=>`<button class="agent-row ${a.id===state.selected?'active':''} ${isDirector(a)?'director-row':''}" data-agent="${esc(a.id)}" aria-pressed="${a.id===state.selected}" ${isDirector(a)?'title="Director · Always pinned to top"':''}>${avatar(a,isDirector(a)?'director-avatar':'',true)}<span class="agent-row-copy"><span class="agent-row-name">${esc(a.name)}<small>${esc(new Date(a.lastActivity).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}))}</small></span><p>${isDirector(a)?'<span class="director-label">Director · </span>':''}${esc(a.preview)}</p></span>${a.unread&&!isDirector(a)?'<span class="unread-dot"></span>':''}</button>`).join('');
 }
-function renderAgentHeader(){const a=selected();$('#agent-heading').innerHTML=`${avatar(a,'large')}<div><h2>${esc(a.name)} <span class="muted" style="font-weight:400">/ ${esc(a.role.split(' ·')[0])}</span></h2><p><span class="status-dot"></span> ${state.mode==='paused'?'Paused':a.autonomy==='auto'?'Autonomous':'Assisted'}</p></div><button class="icon-button" data-action="agent-settings" aria-label="Agent settings">···</button>`;$('#message-input').placeholder=`Message ${a.name}…`;$$('[data-panel]').forEach(b=>{b.classList.toggle('active',b.dataset.panel===state.panel);b.setAttribute('aria-pressed',b.dataset.panel===state.panel);});$('.composer-hint span').textContent=state.mode==='paused'?'Ⅱ Team paused':a.autonomy==='auto'?'Autonomous':'Assisted';}
+function renderAgentHeader(){const a=selected();$('#agent-heading').innerHTML=`${avatar(a,isDirector(a)?'large director-avatar':'large')}<div><h2>${esc(a.name)} <span class="muted" style="font-weight:400">/ ${esc(isDirector(a)?'Director':a.role.split(' ·')[0])}</span></h2><p><span class="status-dot"></span> ${state.mode==='paused'?'Paused':a.autonomy==='auto'?'Autonomous':'Assisted'}</p></div><button class="icon-button" data-action="agent-settings" aria-label="Agent settings">···</button>`;$('#message-input').placeholder=`Message ${a.name}…`;$$('[data-panel]').forEach(b=>{b.classList.toggle('active',b.dataset.panel===state.panel);b.setAttribute('aria-pressed',b.dataset.panel===state.panel);});$('.composer-hint span').textContent=state.mode==='paused'?'Ⅱ Team paused':a.autonomy==='auto'?'Autonomous':'Assisted';}
 function getMessages(id){if(!state.messages[id]){const a=agent(id);state.messages[id]=[{role:'assistant',time:'09:35',text:({jared:'Good morning, Alex. The team is making progress on Brightside. Aaron has the technical work, Designers are up next on the shared computer, and I’m keeping the bigger picture together.\n\nWhat would you like to move forward today?',designers:'We’ve got the kickoff deck on our list. We’re next in line for the shared computer—once Aaron wraps up, we’ll take it from there.',slack:'I’m keeping an eye on team conversations and collecting the updates that matter. The Brightside recap is ready for a final pass.',scout:'Ready to explore. Give me an account, a question, or a hunch, and I’ll turn it into something useful.'})[id]||`Hi, I’m ${a.name}. Give me a task and I’ll get started.`}];}return state.messages[id];}
 function executionCard(){return `<div class="execution-card"><div class="execution-title">Actions <span>3 / 3</span></div><div class="execution-line"><span class="check">✓</span> Read meeting notes & account context <time>2s</time></div><div class="execution-line"><span class="check">✓</span> Verify Slack + SSO release <time>4s</time></div><div class="execution-line"><span class="check">✓</span> Share update with Brightside <time>3s</time></div></div>`;}
 function renderConversation(){const host=$('#conversation-body');$('#composer-area').hidden=state.panel!=='chat';renderAgentHeader();renderGlobal();
@@ -201,9 +235,9 @@ function scheduleDialog(id){const s=state.schedules.find(x=>x.id===id);modal(s?'
 function joinQueue(){const available=state.agents.filter(a=>a.id!==state.computer.owner&&!state.computer.queue.includes(a.id));modal('Computer queue',`<p>One Sapi at the controls. Everyone else has a place in line.</p>${available.map(a=>`<button class="auto-choice" data-queue-agent="${a.id}">${avatar(a)}<span><strong>${esc(a.name)}</strong><small>${esc(a.role)}</small></span><span style="margin-left:auto">＋</span></button>`).join('')||'<div class="empty">The whole team is already in line.</div>'}`);}
 function handoff(auto=false){const c=state.computer;if(!c.queue.length){if(auto&&c.owner){c.lastUsed=c.owner;c.owner=null;render();}return false;}const old=c.owner;c.lastUsed=old||c.lastUsed;c.owner=c.queue.shift();c.paused=false;c.completed++;agent(c.owner).status='busy';if(old&&old!=='you')agent(old).status='online';log(c.owner,'Acquired team computer',`${auto?'Automatic handoff':'Control handed off'} from ${old==='you'?'you':old?agent(old).name:'the available pool'}. Exclusive lock granted.`);if(old&&old!=='you')log(old,'Released team computer',`Lock passed to ${agent(c.owner).name}.`);render();toast(`${agent(c.owner).name} now has the computer lock.`);return true;}
 function canRun(agentId){if(state.mode==='paused'){toast('The team is paused. Resume it from the autonomy menu.');return false;}if(pending.has(agentId)){toast(`${agent(agentId).name} is already working on a demo task.`);return false;}return true;}
-function runTask(id){const t=state.tasks.find(t=>t.id===id);if(!t||!canRun(t.agent))return;closeModal();t.status='In progress';t.progress=35;pending.add(t.agent);log(t.agent,'Task started',t.title);render();toast(`${agent(t.agent).name} is running the demo…`);setTimeout(()=>{pending.delete(t.agent);if(state.mode==='paused'){t.status='Queued';t.progress=0;log(t.agent,'Task paused',`${t.title} returned to the queue.`);render();return;}t.status='Done';t.progress=100;log(t.agent,'Task completed',`${t.title} · simulated execution.`);getMessages(t.agent).push({role:'assistant',time:now(),text:`Done: ${t.title}. I’ve recorded the result in my activity log and updated the task board.`,artifact:t.id==='pilot'});if(state.computer.owner===t.agent&&!state.computer.paused)handoff(true);else render();toast(`${t.title} — complete.`);},1600);}
-function sendChat(value){const text=value.trim();if(!text)return;const id=state.selected;getMessages(id).push({role:'user',time:now(),text:text+(state.attachment?'\n\nAttached: Meeting notes.txt':'')});state.attachment=false;$('#message-input').value='';renderConversation();save();$('#conversation-body').scrollTop=$('#conversation-body').scrollHeight;
-  if(state.mode==='paused'){getMessages(id).push({role:'assistant',time:now(),text:'I have your message. The team is paused, so I’ll wait here. Resume the team and send me the task when you’re ready.'});renderConversation();save();return;}
+function runTask(id){const t=state.tasks.find(t=>t.id===id);if(!t||!canRun(t.agent))return;closeModal();t.status='In progress';t.progress=35;pending.add(t.agent);log(t.agent,'Task started',t.title);render();toast(`${agent(t.agent).name} is running the demo…`);setTimeout(()=>{pending.delete(t.agent);if(state.mode==='paused'){t.status='Queued';t.progress=0;log(t.agent,'Task paused',`${t.title} returned to the queue.`);render();return;}t.status='Done';t.progress=100;log(t.agent,'Task completed',`${t.title} · simulated execution.`);appendMessage(t.agent,{role:'assistant',time:now(),text:`Done: ${t.title}. I’ve recorded the result in my activity log and updated the task board.`,artifact:t.id==='pilot'});if(state.computer.owner===t.agent&&!state.computer.paused)handoff(true);else render();toast(`${t.title} — complete.`);},1600);}
+function sendChat(value){const text=value.trim();if(!text)return;const id=state.selected;appendMessage(id,{role:'user',time:now(),text:text+(state.attachment?'\n\nAttached: Meeting notes.txt':'')});state.attachment=false;$('#message-input').value='';renderConversation();save();$('#conversation-body').scrollTop=$('#conversation-body').scrollHeight;
+  if(state.mode==='paused'){appendMessage(id,{role:'assistant',time:now(),text:'I have your message. The team is paused, so I’ll wait here. Resume the team and send me the task when you’re ready.'});renderConversation();save();return;}
   if(pending.has(id)){toast('Message saved. This Sapi is finishing its current demo action.');return;}
   pending.add(id);renderConversation();$('#conversation-body').scrollTop=$('#conversation-body').scrollHeight;
   setTimeout(()=>{pending.delete(id);let reply,artifact=false;
@@ -212,7 +246,7 @@ function sendChat(value){const text=value.trim();if(!text)return;const id=state.
     else if(/computer|control|lock/i.test(text)){if(state.computer.owner===id)reply='I already hold the computer lock. The rest of the team can observe, and I’ll pass control when I finish.';else{if(!state.computer.queue.includes(id))state.computer.queue.push(id);reply=`I’ve joined the computer queue at position ${state.computer.queue.indexOf(id)+1}. I’ll wait for the current owner to hand off the lock.`;log(id,'Joined computer queue','Requested exclusive computer access.');}computerDialog();}
     else if(/brief|document|kickoff/i.test(text)){reply='The kickoff brief is attached. Its browser tab is ready for generated HTML.';artifact=true;openTab('blank','Kickoff brief');log(id,'Opened kickoff brief','Artifact is available in the workspace.');}
     else{const t={id:uid(),agent:id,title:text.length>70?text.slice(0,67)+'…':text,description:'Created from your conversation. Demo execution is simulated.',status:'Queued',progress:0};state.tasks.push(t);const autonomous=state.mode==='auto'&&agent(id).autonomy==='auto';reply=autonomous?'I’ve turned that into a task and I’m running the demo now. You’ll see the result in Tasks and Log.':'I’ve prepared a task with that context. Open Tasks and choose “Run demo” when you want me to proceed.';log(id,'Task created from chat',t.title);if(autonomous)setTimeout(()=>runTask(t.id),500);}
-    getMessages(id).push({role:'assistant',time:now(),text:reply,artifact});render();if(state.selected===id)$('#conversation-body').scrollTop=$('#conversation-body').scrollHeight;
+    appendMessage(id,{role:'assistant',time:now(),text:reply,artifact});render();if(state.selected===id)$('#conversation-body').scrollTop=$('#conversation-body').scrollHeight;
   },1100);
 }
 function renderAttachment(){$('#attachment-chip').innerHTML=state.attachment?'<div class="attachment-chip">▤ Meeting notes.txt <span class="muted">Sample attachment</span><button type="button" data-action="remove-attachment" aria-label="Remove attachment">×</button></div>':'';}
@@ -295,6 +329,6 @@ $('.wordmark').addEventListener('click',e=>{e.preventDefault();state.panes={side
 $('#workspace-menu').addEventListener('click',()=>{if(state.activeTab)tabSettings(state.activeTab);else addTabDialog();});
 $('#profile-button').addEventListener('click',()=>modal('Workspace settings',`<p>Alex Parker’s workspace. A local playground for your autonomous Sapi team.</p><div class="settings-row"><label>Workspace data<p>Agents, tabs, tasks, and edits save in this browser.</p></label><span class="tag">LOCAL</span></div><div class="settings-row"><label>Prototype version<p>01 · Shared computer & autonomous team</p></label></div><div class="modal-actions"><button class="button danger" id="reset-demo">Reset demo data</button><button class="button primary" data-action="close-settings">Done</button></div>`));
 actions['close-settings']=closeModal;
-document.addEventListener('click',e=>{if(e.target.id==='reset-demo'){if(pending.size){toast('Wait for active demo tasks to finish before resetting.');return;}state=structuredClone(seed);state.workspaces={};workspaceOwner=state.selected;for(const e of browserFrames.values())e.frame.remove();browserFrames.clear();search='';$('#agent-search').value='';closeModal();render();toast('Fresh start. Demo data restored.');}});
+document.addEventListener('click',e=>{if(e.target.id==='reset-demo'){if(pending.size){toast('Wait for active demo tasks to finish before resetting.');return;}state=structuredClone(seed);initializeRoster();state.workspaces={};workspaceOwner=state.selected;for(const e of browserFrames.values())e.frame.remove();browserFrames.clear();search='';$('#agent-search').value='';closeModal();render();toast('Fresh start. Demo data restored.');}});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)&&!$('#modal').open){e.preventDefault();state.panes.sidebar=true;renderPanes();save();$('#agent-search').focus();}});
 render();
