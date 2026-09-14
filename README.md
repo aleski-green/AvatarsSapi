@@ -15,14 +15,15 @@ python3 -m http.server 4174 --bind 127.0.0.1
 | CORPORA | [workspace/index.html](workspace/index.html) | Explore dashboards, chats, settings, customizable browser tabs, and shared computer access with demo data. |
 | Expressions | [avatars.html](avatars.html) | Generate individual Sapi kaomoji avatars used by CORPORA. |
 | Groups | [groups.html](groups.html) | Generate Voronoi group avatars for multi-Sapi organizations. |
+| Agent State | [agent-state-explorer.html](agent-state-explorer.html) | Paste, search, expand, and inspect large agent-state JSON trees. |
 
 CORPORA is a clickable HTML prototype with local browser persistence. Conversations, agent execution, connected apps, schedules, and computer control are simulated. See the [CORPORA documentation](workspace/README.md) for interactions and scope. A portable single-file version is included at [workspace/demo-corpora-ui.html](workspace/demo-corpora-ui.html).
 
 ## Shared style
 
-All three modules use [assets/sapi-theme.css](assets/sapi-theme.css), adapted from [sapiens4.ai](https://sapiens4.ai/): warm gray surfaces, dark navy text, Space Mono body type, Orbitron headings, magenta and violet accents, and fine borders. Generated avatar artwork keeps its existing pastel palettes and export behavior.
+The modules share a visual language adapted from [sapiens4.ai](https://sapiens4.ai/): warm gray surfaces, dark navy text, monospace body type, magenta and violet accents, and fine borders. Generated avatar artwork keeps its existing pastel palettes and export behavior.
 
-The generators share a module navigation bar; CORPORA has a hamburger placeholder for its future menu. All modules offer a light/dark toggle with a shared saved preference. CORPORA keeps compact panel toggles, readable chat text, and the shared-computer footer. Its owner-linked browser surface starts blank and accepts URL or HTML tabs; it does not style guest content.
+The generators and Agent State explorer share a module navigation bar; CORPORA has a hamburger placeholder for its future menu. The generators offer a light/dark toggle with a shared saved preference. CORPORA keeps compact panel toggles, readable chat text, and the shared-computer footer. Its owner-linked browser surface starts blank and accepts URL or HTML tabs; it does not style guest content.
 
 Run `python3 build-prototype.py` after changing the workspace or shared theme to rebuild its portable HTML. The bundle includes both stylesheets and the workspace JavaScript; web fonts have local fallback fonts.
 
