@@ -14,7 +14,7 @@ The Workspace module is a frontend prototype with local browser persistence. Age
 
 All three modules use [assets/sapi-theme.css](assets/sapi-theme.css), adapted from [sapiens4.rent](https://sapiens4.rent/): warm gray surfaces, dark navy text, Space Mono body type, Orbitron headings, magenta and violet accents, and fine borders. Generated avatar artwork keeps its existing pastel palettes and export behavior.
 
-The generators share a module navigation bar. Workspace includes the same destinations in the grid-icon menu beside its logo. Workspace panel toggles, compact spacing, readable chat text, and shared-computer footer are retained.
+The generators share a module navigation bar; Workspace has a hamburger placeholder for its future menu. All modules offer a light/dark toggle with a shared saved preference. Workspace keeps compact panel toggles, readable chat text, and the shared-computer footer. Its owner-linked browser surface starts blank and accepts URL or HTML tabs; it does not style guest content.
 
 Run `python3 build-prototype.py` after changing the workspace or shared theme to rebuild its portable HTML. The bundle includes both stylesheets and the workspace JavaScript; web fonts have local fallback fonts.
 

@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="assets/sapi-theme.css">
 </head>
 <body class="sapi-studio expressions-module">
-  <div class="module-topbar"><a class="sapi-brand" href="workspace/index.html" aria-label="sapi*4 ◠‿◠ AI workspace"><span class="brand-name">sapi*4</span><span class="brand-face">◠‿◠</span><span class="brand-ai">AI</span></a><nav class="module-nav" aria-label="Modules"><a href="index.html" aria-current="page">Expressions</a><a href="groups.html">Groups</a><a href="workspace/index.html">Workspace</a></nav></div>
+  <div class="module-topbar"><a class="sapi-brand" href="workspace/index.html" aria-label="sapi*4 ◠‿◠ AI workspace"><span class="brand-name">sapi*4</span><span class="brand-face">◠‿◠</span><span class="brand-ai">AI</span></a><nav class="module-nav" aria-label="Modules"><a href="index.html" aria-current="page">Expressions</a><a href="groups.html">Groups</a><a href="workspace/index.html">Workspace</a></nav><button class="theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">☾</button></div>
   <div class="shell">
     <header class="studio-header"><div><p class="eyebrow">Individual avatars</p><h1>Expressions</h1></div><div class="counter" id="counter">Sapi #0001<br><span id="rarity">STANDARD</span></div></header>
     <main>
@@ -78,5 +78,6 @@
     function tile(s,id){const b=document.createElement('button');b.className='tile';b.style.background='var(--paper)';b.style.color='var(--ink)';const circle=document.createElement('span');circle.className='tile-circle';circle.style.background=litBackground(palette[s.background][0]);const accent=document.createElement('span');accent.className='tile-accent';accent.textContent=sparkChar(s);const expression=document.createElement('span');expression.className='tile-expression';expression.textContent=composed(s);circle.append(accent,expression);b.append(circle);b.title=`Load Sapi Expression #${id}`;b.addEventListener('click',()=>{state=s;sapiId=id;render();window.scrollTo({top:0,behavior:'smooth'})});requestAnimationFrame(()=>fitText(expression,92,7,0));return b}function collection(){const g=document.querySelector('#gallery');g.innerHTML='';const r=seeded(hash(document.querySelector('#seed').value+'-collection'));for(let i=1;i<=10;i++)g.append(tile(randomState(r),i))}
     createControls();render();collection();window.addEventListener('resize',()=>{fitPreview();document.querySelectorAll('.tile-expression').forEach(t=>fitText(t,92,7,0))});document.querySelector('#randomize').addEventListener('click',()=>{state=randomState();sapiId++;document.querySelector('#seed').value=`sapi-${String(sapiId).padStart(4,'0')}`;render()});document.querySelector('#applySeed').addEventListener('click',()=>applySeed(document.querySelector('#seed').value));document.querySelector('#copyMetadata').addEventListener('click',copyMetadata);document.querySelector('#download').addEventListener('click',exportPng);document.querySelector('#generateCollection').addEventListener('click',collection);
   </script>
+<script src="assets/sapi-theme.js"></script>
 </body>
 </html>
